@@ -1,0 +1,36 @@
+server:
+  address: 0.0.0.0
+  port: 8083
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true # Enables dynamic routing via service names
+          lowerCaseServiceId: true
+      routes:
+        - id: patient-service
+          uri: lb://patient-service  #lb: means Load Balanced (thanks to Eureka)
+          predicates:
+            - Path=/api/patients/**
+          filters:
+            - StripPrefix=1   #removes /api before forwarding
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+      instance-id: ${spring.cloud.client.ip-address}:${server.port}
+
+
+
+
+# Todo: fix microservice to work with VPN later
