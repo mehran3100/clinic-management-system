@@ -1,7 +1,7 @@
 package com.clinic.patientservice.service;
 
 import com.clinic.patientservice.dto.PatientDto;
-import com.clinic.patientservice.entity.Patient;
+import com.clinic.patientservice.model.Patient;
 import com.clinic.patientservice.exception.ResourceNotFoundException;
 import com.clinic.patientservice.mapper.PatientMapper;
 import com.clinic.patientservice.repository.PatientRepository;

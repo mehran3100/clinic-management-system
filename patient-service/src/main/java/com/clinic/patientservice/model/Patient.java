@@ -1,4 +1,4 @@
-package com.clinic.patientservice.entity;
+package com.clinic.patientservice.model;
 
 import jakarta.persistence.*;
 import lombok.*;

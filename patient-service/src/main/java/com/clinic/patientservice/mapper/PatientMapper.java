@@ -1,7 +1,7 @@
 package com.clinic.patientservice.mapper;
 
 import com.clinic.patientservice.dto.PatientDto;
-import com.clinic.patientservice.entity.Patient;
+import com.clinic.patientservice.model.Patient;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
