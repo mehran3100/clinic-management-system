@@ -20,6 +20,12 @@ spring:
             - Path=/api/patients/**
           filters:
             - StripPrefix=1   #removes /api before forwarding
+        - id: appointment-service
+          uri: lb://appointment-service
+          predicates:
+            - Path=/api/appointments/**
+          filters:
+            - StripPrefix=1
 
 eureka:
   instance:

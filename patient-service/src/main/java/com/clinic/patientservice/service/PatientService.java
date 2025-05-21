@@ -1,13 +1,17 @@
 package com.clinic.patientservice.service;
 
-import com.clinic.patientservice.dto.PatientDto;
+import com.clinic.patientservice.dto.PatientDTO;
 
 import java.util.List;
 
 public interface PatientService {
-    PatientDto createPatient(PatientDto dto);
-    PatientDto getPatientById(Long id);
-    List<PatientDto> getAllPatients();
-    PatientDto updatePatient(Long id, PatientDto dto);
+    PatientDTO createPatient(PatientDTO dto);
+    List<PatientDTO> createBatch(List<PatientDTO> dtos);
+    PatientDTO getPatientById(Long id);
+    List<PatientDTO> getAllPatients();
+    PatientDTO updatePatient(Long id, PatientDTO dto);
+    List<PatientDTO> updateBatch(List<PatientDTO> dtos);
     void deletePatient(Long id);
+    void deleteBatch(List<Long> ids);
+
 }

@@ -18,6 +18,11 @@ public class AppointmentController {
         this.service = service;
     }
 
+    @PostMapping("/batch")
+    public ResponseEntity<List<AppointmentDTO>> createBatch(@Valid @RequestBody List<AppointmentDTO> dtos) {
+        return ResponseEntity.ok(service.createBatch(dtos));
+    }
+
     @PostMapping
     public ResponseEntity<AppointmentDTO> create(@Valid @RequestBody AppointmentDTO dto) {
         return ResponseEntity.ok(service.save(dto));
@@ -39,11 +44,22 @@ public class AppointmentController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/batch")
+    public ResponseEntity<Void> deleteBatch(@RequestBody List<Long> ids) {
+        service.deleteBatch(ids);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<AppointmentDTO> update(
             @PathVariable Long id,
             @Valid @RequestBody AppointmentDTO dto) {
         return ResponseEntity.ok(service.update(id, dto));
+    }
+
+    @PutMapping("/batch")
+    public ResponseEntity<List<AppointmentDTO>> updateBatch(@Valid @RequestBody List<AppointmentDTO> dtos) {
+        return ResponseEntity.ok(service.updateBatch(dtos));
     }
 
 }

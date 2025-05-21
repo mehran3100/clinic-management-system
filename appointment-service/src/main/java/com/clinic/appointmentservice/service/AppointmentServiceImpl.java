@@ -21,6 +21,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    public List<AppointmentDTO> createBatch(List<AppointmentDTO> dtos) {
+        List<Appointment> entities = dtos.stream()
+                .map(mapper::toEntity)
+                .toList();
+
+        List<Appointment> savedEntities = repository.saveAll(entities);
+
+        return mapper.toDTOList(savedEntities);
+    }
+
+    @Override
     public AppointmentDTO save(AppointmentDTO dto) {
         Appointment saved = repository.save(mapper.toEntity(dto));
         return mapper.toDTO(saved);
@@ -47,6 +58,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    public void deleteBatch(List<Long> ids) {
+        ids.forEach(id -> {
+            if (!repository.existsById(id)) {
+                throw new ResourceNotFoundException("Appointment not found with ID: " + id);
+            }
+        });
+        repository.deleteAllById(ids);
+    }
+
+    @Override
     public AppointmentDTO update(Long id, AppointmentDTO dto) {
         Appointment existing = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with ID: " + id));
@@ -60,5 +81,19 @@ public class AppointmentServiceImpl implements AppointmentService {
         return mapper.toDTO(updated);
     }
 
+    @Override
+    public List<AppointmentDTO> updateBatch(List<AppointmentDTO> dtos) {
+        List<Appointment> updated = dtos.stream().map(dto -> {
+            Appointment existing = repository.findById(dto.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with ID: " + dto.getId()));
+            existing.setPatientId(dto.getPatientId());
+            existing.setAppointmentDate(dto.getAppointmentDate());
+            existing.setTimeSlot(dto.getTimeSlot());
+            existing.setNotes(dto.getNotes());
+            return existing;
+        }).toList();
+
+        return mapper.toDTOList(repository.saveAll(updated));
+    }
 
 }

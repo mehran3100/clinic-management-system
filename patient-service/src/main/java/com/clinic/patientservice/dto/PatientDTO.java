@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Data
-public class PatientDto {
+public class PatientDTO {
 
     private Long id;
 

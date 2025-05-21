@@ -1,6 +1,6 @@
 package com.clinic.patientservice.service;
 
-import com.clinic.patientservice.dto.PatientDto;
+import com.clinic.patientservice.dto.PatientDTO;
 import com.clinic.patientservice.model.Patient;
 import com.clinic.patientservice.exception.ResourceNotFoundException;
 import com.clinic.patientservice.mapper.PatientMapper;
@@ -13,39 +13,47 @@ import java.util.stream.Collectors;
 @Service
 public class PatientServiceImpl implements PatientService {
 
-    private final PatientRepository patientRepository;
-    private final PatientMapper patientMapper;
+    private final PatientRepository repository;
+    private final PatientMapper mapper;
 
     public PatientServiceImpl(PatientRepository patientRepository, PatientMapper patientMapper) {
-        this.patientRepository = patientRepository;
-        this.patientMapper = patientMapper;
+        this.repository = patientRepository;
+        this.mapper = patientMapper;
     }
 
     @Override
-    public PatientDto createPatient(PatientDto dto) {
-        Patient patient = patientMapper.toEntity(dto);
-        Patient savedPatient = patientRepository.save(patient);
-        return patientMapper.toDto(savedPatient);
+    public PatientDTO createPatient(PatientDTO dto) {
+        Patient patient = mapper.toEntity(dto);
+        Patient savedPatient = repository.save(patient);
+        return mapper.toDto(savedPatient);
     }
 
     @Override
-    public PatientDto getPatientById(Long id) {
-        Patient patient = patientRepository.findById(id)
+    public List<PatientDTO> createBatch(List<PatientDTO> dtos) {
+        List<Patient> saved = repository.saveAll(
+                dtos.stream().map(mapper::toEntity).toList()
+        );
+        return mapper.toDTOList(saved);
+    }
+
+    @Override
+    public PatientDTO getPatientById(Long id) {
+        Patient patient = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
-        return patientMapper.toDto(patient);
+        return mapper.toDto(patient);
     }
 
     @Override
-    public List<PatientDto> getAllPatients() {
-        return patientRepository.findAll()
+    public List<PatientDTO> getAllPatients() {
+        return repository.findAll()
                 .stream()
-                .map(patientMapper::toDto)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public PatientDto updatePatient(Long id, PatientDto dto) {
-        Patient existingPatient = patientRepository.findById(id)
+    public PatientDTO updatePatient(Long id, PatientDTO dto) {
+        Patient existingPatient = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
 
         existingPatient.setFirstName(dto.getFirstName());
@@ -55,15 +63,42 @@ public class PatientServiceImpl implements PatientService {
         existingPatient.setAge(dto.getAge());
         existingPatient.setAddress(dto.getAddress());
 
-        Patient updatedPatient = patientRepository.save(existingPatient);
-        return patientMapper.toDto(updatedPatient);
+        Patient updatedPatient = repository.save(existingPatient);
+        return mapper.toDto(updatedPatient);
+    }
+
+    @Override
+    public List<PatientDTO> updateBatch(List<PatientDTO> dtos) {
+        List<Patient> updated = dtos.stream().map(dto -> {
+            Patient existing = repository.findById(dto.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + dto.getId()));
+            existing.setFirstName(dto.getFirstName());
+            existing.setLastName(dto.getLastName());
+            existing.setAge(dto.getAge());
+            existing.setEmail(dto.getEmail());
+            existing.setPhone(dto.getPhone());
+            existing.setAddress(dto.getAddress());
+            return existing;
+        }).toList();
+        return mapper.toDTOList(repository.saveAll(updated));
     }
 
     @Override
     public void deletePatient(Long id) {
-        if (!patientRepository.existsById(id)) {
+        if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Patient not found with id: " + id);
         }
-        patientRepository.deleteById(id);
+        repository.deleteById(id);
     }
+
+    @Override
+    public void deleteBatch(List<Long> ids) {
+        ids.forEach(id -> {
+            if (!repository.existsById(id)) {
+                throw new ResourceNotFoundException("Patient not found with ID: " + id);
+            }
+        });
+        repository.deleteAllById(ids);
+    }
+
 }
