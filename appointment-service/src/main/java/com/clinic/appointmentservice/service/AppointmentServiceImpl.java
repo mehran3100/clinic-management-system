@@ -5,6 +5,7 @@ import com.clinic.appointmentservice.exception.ResourceNotFoundException;
 import com.clinic.appointmentservice.mapper.AppointmentMapper;
 import com.clinic.appointmentservice.model.Appointment;
 import com.clinic.appointmentservice.repository.AppointmentRepository;
+import com.clinic.appointmentservice.utility.DateUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -71,9 +72,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     public AppointmentDTO update(Long id, AppointmentDTO dto) {
         Appointment existing = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with ID: " + id));
-
         existing.setPatientId(dto.getPatientId());
-        existing.setAppointmentDate(dto.getAppointmentDate());
+        existing.setAppointmentDate(DateUtil.parse(dto.getAppointmentDate()));
         existing.setTimeSlot(dto.getTimeSlot());
         existing.setNotes(dto.getNotes());
 
@@ -87,7 +87,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             Appointment existing = repository.findById(dto.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with ID: " + dto.getId()));
             existing.setPatientId(dto.getPatientId());
-            existing.setAppointmentDate(dto.getAppointmentDate());
+            existing.setAppointmentDate(DateUtil.parse(dto.getAppointmentDate()));
             existing.setTimeSlot(dto.getTimeSlot());
             existing.setNotes(dto.getNotes());
             return existing;
