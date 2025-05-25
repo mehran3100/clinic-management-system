@@ -1,10 +1,70 @@
 version: '3.8'
+
 services:
+
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-multiple-db.sql:/docker-entrypoint-initdb.d/init.sql
+
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.3
+    container_name: keycloak
     command: start-dev
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
       - "8089:8080"
+
+  discovery-server:
+    build:
+      context: ./discovery-server
+    container_name: discovery-server
+    ports:
+      - "8761:8080"
+    depends_on:
+      - keycloak
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8083:8080"
+    depends_on:
+      - discovery-server
+
+  patient-service:
+    build:
+      context: ./patient-service
+    container_name: patient-service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+      - discovery-server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/patient_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
+
+  appointment-service:
+    build:
+      context: ./appointment-service
+    container_name: appointment-service
+    ports:
+      - "8084:8080"
+    depends_on:
+      - postgres
+      - discovery-server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/appointment_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456

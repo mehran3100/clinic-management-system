@@ -1,12 +1,12 @@
 server:
-  port: 8084
+  port: 8080
 
 spring:
   application:
     name: appointment-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/appointment_db
+    url: jdbc:postgresql://postgres:5432/appointment_db
     username: postgres
     password: 123456
   jpa:
