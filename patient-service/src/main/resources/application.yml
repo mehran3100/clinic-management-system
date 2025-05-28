@@ -1,14 +1,17 @@
 server:
-  port: 8080
+#  port: 8081 #my machine
+  port: 8080 #docker
 
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8089/realms/clinic-realm
+#          issuer-uri: http://localhost:8089/realms/clinic-realm #my machine
+          issuer-uri: http://keycloak:8080/realms/clinic-realm #docker
   datasource:
-    url: jdbc:postgresql://postgres-patient:5432/patient_db
+    url: jdbc:postgresql://postgres-patient:5432/patient_db #docker
+#    url: jdbc:postgresql://localhost:5432/patient_db #my machine
     username: postgres
     password: 123456
   jpa:

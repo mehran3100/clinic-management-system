@@ -16,12 +16,15 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.3
     container_name: keycloak
-    command: start-dev
+    ports:
+      - "8080:8080"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    ports:
-      - "8089:8080"
+    command:
+      - start-dev
+    volumes:
+      - keycloak-data:/opt/keycloak/data  # 👈 This line persists all your config
 
   discovery-server:
     build:
@@ -68,3 +71,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/appointment_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123456
+
+volumes:
+  keycloak-data:
