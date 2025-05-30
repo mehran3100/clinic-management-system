@@ -2,6 +2,7 @@ package com.clinic.appointmentservice.controller;
 
 import com.clinic.appointmentservice.dto.AppointmentDTO;
 import com.clinic.appointmentservice.service.AppointmentService;
+import com.clinic.commoncore.dto.AppointmentResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,11 @@ public class AppointmentController {
     @PutMapping("/batch")
     public ResponseEntity<List<AppointmentDTO>> updateBatch(@Valid @RequestBody List<AppointmentDTO> dtos) {
         return ResponseEntity.ok(service.updateBatch(dtos));
+    }
+
+    @GetMapping("/{id}/with-patient")
+    public ResponseEntity<AppointmentResponse> getWithPatient(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getAppointmentWithPatient(id));
     }
 
 }

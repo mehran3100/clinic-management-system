@@ -1,4 +1,4 @@
-package com.clinic.appointmentservice.exception;
+package com.clinic.commoncore.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

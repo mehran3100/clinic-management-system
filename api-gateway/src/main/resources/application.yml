@@ -1,41 +1,5 @@
-server:
-#  port: 8083 #my machine
-  port: 8080 #docker
 spring:
+  profiles:
+    active: dev
   main:
     web-application-type: reactive
-  application:
-    name: api-gateway
-
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true # Enables dynamic routing via service names
-          lowerCaseServiceId: true
-      routes:
-        - id: patient-service
-          uri: lb://patient-service  #lb: means Load Balanced (thanks to Eureka)
-          predicates:
-            - Path=/api/patients/**
-          filters:
-            - StripPrefix=1   #removes /api before forwarding
-        - id: appointment-service
-          uri: lb://appointment-service
-          predicates:
-            - Path=/api/appointments/**
-          filters:
-            - StripPrefix=1
-
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-      instance-id: ${spring.cloud.client.ip-address}:${server.port}
-
-
-
-
-# Todo: fix microservice to work with VPN later

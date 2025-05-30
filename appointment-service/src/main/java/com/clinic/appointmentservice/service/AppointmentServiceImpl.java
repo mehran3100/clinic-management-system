@@ -1,11 +1,14 @@
 package com.clinic.appointmentservice.service;
 
 import com.clinic.appointmentservice.dto.AppointmentDTO;
-import com.clinic.appointmentservice.exception.ResourceNotFoundException;
+import com.clinic.commoncore.exception.ResourceNotFoundException;
+import com.clinic.appointmentservice.feignclient.PatientClient;
 import com.clinic.appointmentservice.mapper.AppointmentMapper;
 import com.clinic.appointmentservice.model.Appointment;
 import com.clinic.appointmentservice.repository.AppointmentRepository;
 import com.clinic.appointmentservice.utility.DateUtil;
+import com.clinic.commoncore.dto.AppointmentResponse;
+import com.clinic.commoncore.dto.PatientDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +18,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository repository;
     private final AppointmentMapper mapper;
+    private final PatientClient client;
 
-    public AppointmentServiceImpl(AppointmentRepository repository, AppointmentMapper mapper) {
+    public AppointmentServiceImpl(AppointmentRepository repository, AppointmentMapper mapper, PatientClient client) {
         this.repository = repository;
         this.mapper = mapper;
+        this.client = client;
     }
 
     @Override
@@ -94,6 +99,22 @@ public class AppointmentServiceImpl implements AppointmentService {
         }).toList();
 
         return mapper.toDTOList(repository.saveAll(updated));
+    }
+
+    @Override
+    public AppointmentResponse getAppointmentWithPatient(Long appointmentId) {
+        Appointment appointment = repository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + appointmentId));
+
+        PatientDTO patient = client.getPatientById(appointment.getPatientId());
+
+        return AppointmentResponse.builder()
+                .id(appointment.getId())
+                .appointmentDate(appointment.getAppointmentDate())
+                .timeSlot(appointment.getTimeSlot())
+                .notes(appointment.getNotes())
+                .patient(patient)
+                .build();
     }
 
 }

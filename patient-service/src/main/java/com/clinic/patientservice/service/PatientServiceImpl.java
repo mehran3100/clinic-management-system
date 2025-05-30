@@ -2,11 +2,10 @@ package com.clinic.patientservice.service;
 
 import com.clinic.patientservice.dto.PatientDTO;
 import com.clinic.patientservice.model.Patient;
-import com.clinic.patientservice.exception.ResourceNotFoundException;
 import com.clinic.patientservice.mapper.PatientMapper;
 import com.clinic.patientservice.repository.PatientRepository;
 import org.springframework.stereotype.Service;
-
+import com.clinic.commoncore.exception.ResourceNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 

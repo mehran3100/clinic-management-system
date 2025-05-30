@@ -24,7 +24,7 @@ services:
     command:
       - start-dev
     volumes:
-      - keycloak-data:/opt/keycloak/data  # 👈 This line persists all your config
+      - keycloak-data:/opt/keycloak/data
 
   discovery-server:
     build:
@@ -34,6 +34,8 @@ services:
       - "8761:8080"
     depends_on:
       - keycloak
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
 
   api-gateway:
     build:
@@ -43,6 +45,8 @@ services:
       - "8083:8080"
     depends_on:
       - discovery-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
 
   patient-service:
     build:
@@ -57,6 +61,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/patient_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_PROFILES_ACTIVE: docker
 
   appointment-service:
     build:
@@ -71,6 +76,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/appointment_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_PROFILES_ACTIVE: docker
 
 volumes:
   keycloak-data:
