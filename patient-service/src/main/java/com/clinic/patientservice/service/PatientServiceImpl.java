@@ -1,13 +1,15 @@
 package com.clinic.patientservice.service;
 
-import com.clinic.patientservice.dto.PatientDTO;
-import com.clinic.patientservice.model.Patient;
-import com.clinic.patientservice.mapper.PatientMapper;
-import com.clinic.patientservice.repository.PatientRepository;
-import org.springframework.stereotype.Service;
 import com.clinic.commoncore.exception.ResourceNotFoundException;
+import com.clinic.patientservice.dto.PatientDTO;
+import com.clinic.patientservice.mapper.PatientMapper;
+import com.clinic.patientservice.model.Patient;
+import com.clinic.patientservice.repository.PatientRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PatientServiceImpl implements PatientService {
@@ -24,7 +26,7 @@ public class PatientServiceImpl implements PatientService {
     public PatientDTO createPatient(PatientDTO dto) {
         Patient patient = mapper.toEntity(dto);
         Patient savedPatient = repository.save(patient);
-        return mapper.toDto(savedPatient);
+        return mapper.toDTO(savedPatient);
     }
 
     @Override
@@ -39,15 +41,13 @@ public class PatientServiceImpl implements PatientService {
     public PatientDTO getPatientById(Long id) {
         Patient patient = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
-        return mapper.toDto(patient);
+        return mapper.toDTO(patient);
     }
 
     @Override
-    public List<PatientDTO> getAllPatients() {
-        return repository.findAll()
-                .stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+    public Page<PatientDTO> getAllPatients(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toDTO);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class PatientServiceImpl implements PatientService {
         existingPatient.setAddress(dto.getAddress());
 
         Patient updatedPatient = repository.save(existingPatient);
-        return mapper.toDto(updatedPatient);
+        return mapper.toDTO(updatedPatient);
     }
 
     @Override

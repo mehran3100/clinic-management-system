@@ -9,6 +9,8 @@ import com.clinic.appointmentservice.repository.AppointmentRepository;
 import com.clinic.appointmentservice.utility.DateUtil;
 import com.clinic.commoncore.dto.AppointmentResponse;
 import com.clinic.commoncore.dto.PatientDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,8 +46,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<AppointmentDTO> getAll() {
-        return mapper.toDTOList(repository.findAll());
+    public Page<AppointmentDTO> getAllAppointments(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toDTO);
     }
 
     @Override

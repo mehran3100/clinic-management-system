@@ -1,9 +1,14 @@
 server:
   port: 8081
+  error:
+    include-message: always
+    include-stacktrace: always
 
 spring:
   application:
     name: patient-service
+  main:
+    banner-mode: "console"
   datasource:
     url: jdbc:postgresql://localhost:5432/patient_db
     username: postgres
@@ -49,3 +54,12 @@ logging:
     feign: DEBUG
     org.springframework.web: DEBUG
     org.springframework.web.servlet.DispatcherServlet: DEBUG
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  show-actuator: true
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
