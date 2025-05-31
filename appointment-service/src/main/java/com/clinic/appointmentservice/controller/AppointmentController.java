@@ -3,8 +3,10 @@ package com.clinic.appointmentservice.controller;
 import com.clinic.appointmentservice.dto.AppointmentDTO;
 import com.clinic.appointmentservice.service.AppointmentService;
 import com.clinic.commoncore.dto.AppointmentResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,8 +37,13 @@ public class AppointmentController {
         return ResponseEntity.ok(service.save(dto));
     }
 
+    @Operation(
+            summary = "Get paginated appointments",
+            description = "Use query parameters like ?page=0&size=10&sort=id,asc. Avoid sort=[\"string\"]"
+    )
     @GetMapping
     public Page<AppointmentDTO> getAllAppointments(
+            @ParameterObject
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         return service.getAllAppointments(pageable);
@@ -47,16 +54,9 @@ public class AppointmentController {
         return ResponseEntity.ok(service.getById(id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/batch")
-    public ResponseEntity<Void> deleteBatch(@RequestBody List<Long> ids) {
-        service.deleteBatch(ids);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/{id}/with-patient")
+    public ResponseEntity<AppointmentResponse> getWithPatient(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getAppointmentWithPatient(id));
     }
 
     @PutMapping("/{id}")
@@ -71,11 +71,16 @@ public class AppointmentController {
         return ResponseEntity.ok(service.updateBatch(dtos));
     }
 
-    @GetMapping("/{id}/with-patient")
-    public ResponseEntity<AppointmentResponse> getWithPatient(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getAppointmentWithPatient(id));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
-
+    @DeleteMapping("/batch")
+    public ResponseEntity<Void> deleteBatch(@RequestBody List<Long> ids) {
+        service.deleteBatch(ids);
+        return ResponseEntity.noContent().build();
+    }
 
 }

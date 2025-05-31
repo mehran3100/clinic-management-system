@@ -1,6 +1,6 @@
-📅 APPOINTMENT SERVICE BOOTING...
+🛡️ API GATEWAY GUARDING THE REALM
 
-"Boy... we do not miss our fate."
+"No request passes without my blessing."
 
   ▄████████ ▀████    ▐████▀ ▄█     ▄████████ 
  ███    ███   ███▌   ████▀ ███    ███    ███ 

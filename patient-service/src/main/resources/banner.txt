@@ -1,6 +1,6 @@
-📅 APPOINTMENT SERVICE BOOTING...
+🩺 PATIENT SERVICE INITIALIZED
 
-"Boy... we do not miss our fate."
+"Boy... someone needs healing."
 
   ▄████████ ▀████    ▐████▀ ▄█     ▄████████ 
  ███    ███   ███▌   ████▀ ███    ███    ███ 

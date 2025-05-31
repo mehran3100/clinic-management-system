@@ -2,8 +2,10 @@ package com.clinic.patientservice.controller;
 
 import com.clinic.patientservice.dto.PatientDTO;
 import com.clinic.patientservice.service.PatientService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -39,8 +41,13 @@ public class PatientController {
         return ResponseEntity.ok(service.getPatientById(id));
     }
 
+    @Operation(
+            summary = "Get paginated patients",
+            description = "Use query parameters like ?page=0&size=10&sort=id,asc. Avoid sort=[\"string\"]"
+    )
     @GetMapping
     public Page<PatientDTO> getAllPatients(
+            @ParameterObject
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         return service.getAllPatients(pageable);
