@@ -77,7 +77,6 @@ No more `["string"]` nonsense. Only structured query parameters like:
 ## ⚔️ Future Enhancements
 - Notification Service via Kafka
 - FHIR integration for full clinical data standards
-- Docker Compose orchestration
 - Frontend portal with role-based UI
 
 ---
