@@ -7,6 +7,17 @@ server:
 spring:
   application:
     name: appointment-service
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: clinic-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
   main:
     banner-mode: "console"
   datasource:
@@ -26,6 +37,7 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
+    hostname: ${HOSTNAME}
     lease-renewal-interval-in-seconds: 5
   client:
     registry-fetch-interval-seconds: 5

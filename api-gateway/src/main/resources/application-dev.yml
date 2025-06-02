@@ -17,15 +17,15 @@ spring:
         - id: patient-service
           uri: lb://patient-service
           predicates:
-            - Path=/api/patients/**
+            - Path=/patients/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=0
         - id: appointment-service
           uri: lb://appointment-service
           predicates:
-            - Path=/api/appointments/**
+            - Path=/appointments/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=0
 
 eureka:
   instance:

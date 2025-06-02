@@ -25,7 +25,9 @@ replay_pid*
 
 /target/
 *.log
+logs/
 *.iml
 .idea/
 *.class
 .DS_Store
+.dockerignore

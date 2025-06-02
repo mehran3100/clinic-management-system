@@ -14,6 +14,7 @@
         <module>common-core</module>
         <module>discovery-server</module>
         <module>patient-service</module>
+        <module>common-kafka</module>
     </modules>
 
     <properties>

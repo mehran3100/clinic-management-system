@@ -2,6 +2,33 @@ version: '3.8'
 
 services:
 
+  # Kafka and Zookeeper services
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - clinic-network
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - clinic-network
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
   postgres:
     image: postgres:14
     container_name: postgres
@@ -10,6 +37,8 @@ services:
       POSTGRES_PASSWORD: 123456
     ports:
       - "5432:5432"
+    networks:
+      - clinic-network
     volumes:
       - ./init-multiple-db.sql:/docker-entrypoint-initdb.d/init.sql
 
@@ -18,6 +47,8 @@ services:
     container_name: keycloak
     ports:
       - "8080:8080"
+    networks:
+      - clinic-network
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -27,11 +58,14 @@ services:
       - keycloak-data:/opt/keycloak/data
 
   discovery-server:
+    image: eurekaserver-image
     build:
       context: ./discovery-server
     container_name: discovery-server
     ports:
-      - "8761:8080"
+      - "8761:8761"
+    networks:
+      - clinic-network
     depends_on:
       - keycloak
     environment:
@@ -43,6 +77,8 @@ services:
     container_name: api-gateway
     ports:
       - "8083:8080"
+    networks:
+      - clinic-network
     depends_on:
       - discovery-server
     environment:
@@ -54,6 +90,8 @@ services:
     container_name: patient-service
     ports:
       - "8081:8080"
+    networks:
+      - clinic-network
     depends_on:
       - postgres
       - discovery-server
@@ -69,6 +107,8 @@ services:
     container_name: appointment-service
     ports:
       - "8084:8080"
+    networks:
+      - clinic-network
     depends_on:
       - postgres
       - discovery-server
@@ -80,3 +120,7 @@ services:
 
 volumes:
   keycloak-data:
+
+networks:
+  clinic-network:
+    driver: bridge

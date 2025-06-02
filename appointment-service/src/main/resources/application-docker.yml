@@ -2,6 +2,17 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: appointment-service
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: appointment-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring.json.trusted.packages: "*"
   datasource:
     url: jdbc:postgresql://postgres:5432/appointment_db
     username: postgres
@@ -17,9 +28,14 @@ spring:
           issuer-uri: http://keycloak:8080/realms/clinic-realm
 
 eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: ${HOSTNAME}
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
 
 logging:
   level:
