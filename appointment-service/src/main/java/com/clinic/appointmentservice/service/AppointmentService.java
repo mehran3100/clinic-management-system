@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface AppointmentService {
-    AppointmentDTO save(AppointmentDTO dto);
+    AppointmentDTO create(AppointmentDTO dto);
     List<AppointmentDTO> createBatch(List<AppointmentDTO> dtos);
     Page<AppointmentDTO> getAllAppointments(Pageable pageable);
     AppointmentDTO getById(Long id);

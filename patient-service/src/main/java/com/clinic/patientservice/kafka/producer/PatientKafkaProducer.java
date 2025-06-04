@@ -6,11 +6,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class KafkaProducer {
+public class PatientKafkaProducer {
 
     private final KafkaTemplate<String, Object> kafka;
 
-    public KafkaProducer(KafkaTemplate<String, Object> kafka) {
+    public PatientKafkaProducer(KafkaTemplate<String, Object> kafka) {
         this.kafka = kafka;
     }
 

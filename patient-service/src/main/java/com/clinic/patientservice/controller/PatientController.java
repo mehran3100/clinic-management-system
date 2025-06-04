@@ -3,7 +3,7 @@ package com.clinic.patientservice.controller;
 import com.clinic.commonkafka.dto.PatientEventDTO;
 import com.clinic.commonkafka.event.PatientCreatedEvent;
 import com.clinic.patientservice.dto.PatientDTO;
-import com.clinic.patientservice.kafka.producer.KafkaProducer;
+import com.clinic.patientservice.kafka.producer.PatientKafkaProducer;
 import com.clinic.patientservice.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,8 +24,8 @@ import java.util.List;
 public class PatientController {
 
     private final PatientService service;
-    private final KafkaProducer kafka;
-    public PatientController(PatientService patientService, KafkaProducer kafka) {
+    private final PatientKafkaProducer kafka;
+    public PatientController(PatientService patientService, PatientKafkaProducer kafka) {
         this.service = patientService;
         this.kafka = kafka;
     }
