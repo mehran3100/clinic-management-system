@@ -1,4 +1,4 @@
-package com.clinic.discovery_server;
+package com.clinic.discoveryserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

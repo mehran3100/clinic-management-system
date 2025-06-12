@@ -2,12 +2,14 @@ package com.clinic.patientservice.service;
 
 import com.clinic.commoncore.exception.ResourceNotFoundException;
 import com.clinic.patientservice.dto.PatientDTO;
+import com.clinic.patientservice.kafka.producer.PatientKafkaProducer;
 import com.clinic.patientservice.mapper.PatientMapper;
 import com.clinic.patientservice.model.Patient;
 import com.clinic.patientservice.repository.PatientRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.clinic.commonkafka.event.PatientCreatedEvent;
 
 import java.util.List;
 
@@ -16,18 +18,26 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository repository;
     private final PatientMapper mapper;
+    private final PatientKafkaProducer kafka;
 
-    public PatientServiceImpl(PatientRepository patientRepository, PatientMapper patientMapper) {
+    public PatientServiceImpl(PatientRepository patientRepository, PatientMapper patientMapper, PatientKafkaProducer kafka) {
         this.repository = patientRepository;
         this.mapper = patientMapper;
+        this.kafka = kafka;
     }
 
     @Override
     public PatientDTO createPatient(PatientDTO dto) {
-        Patient patient = mapper.toEntity(dto);
-        Patient savedPatient = repository.save(patient);
-        return mapper.toDTO(savedPatient);
+        var entity = mapper.toEntity(dto);
+        var saved = repository.save(entity);
+
+        var event = PatientCreatedEvent.builder()
+                .data(mapper.toEventDTO(saved))
+                .build();
+        kafka.send(event);
+        return mapper.toDTO(saved);
     }
+
 
     @Override
     public List<PatientDTO> createBatch(List<PatientDTO> dtos) {

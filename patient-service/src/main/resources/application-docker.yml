@@ -5,12 +5,13 @@ spring:
   application:
     name: patient-service
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: kafka:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    properties:
-      spring.json.trusted.packages: "*"
+      properties:
+        security.protocol: PLAINTEXT
+        spring.json.trusted.packages: "*"
   datasource:
     url: jdbc:postgresql://postgres-patient:5432/patient_db
     username: postgres
@@ -35,6 +36,8 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://discovery-server:8761/eureka
+      webclient:
+        enabled: true
 
 info:
   app:

@@ -6,9 +6,11 @@
     <parent>
         <groupId>com.clinic</groupId>
         <artifactId>clinic-management-system</artifactId>
-        <version>1.0.0</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>discovery-server</artifactId>
+    <name>Discovery Server</name>
+    <description>Service registry for dynamic discovery of microservices (Eureka)</description>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -19,7 +21,6 @@
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -36,5 +37,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

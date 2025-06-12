@@ -6,7 +6,7 @@ server:
 
 spring:
   application:
-    name:
+    name: patient-service
   kafka:
     bootstrap-servers: localhost:9092
     consumer:

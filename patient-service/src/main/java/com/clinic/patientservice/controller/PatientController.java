@@ -1,9 +1,6 @@
 package com.clinic.patientservice.controller;
 
-import com.clinic.commonkafka.dto.PatientEventDTO;
-import com.clinic.commonkafka.event.PatientCreatedEvent;
 import com.clinic.patientservice.dto.PatientDTO;
-import com.clinic.patientservice.kafka.producer.PatientKafkaProducer;
 import com.clinic.patientservice.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,17 +21,13 @@ import java.util.List;
 public class PatientController {
 
     private final PatientService service;
-    private final PatientKafkaProducer kafka;
-    public PatientController(PatientService patientService, PatientKafkaProducer kafka) {
+    public PatientController(PatientService patientService) {
         this.service = patientService;
-        this.kafka = kafka;
     }
 
     @PostMapping
     public ResponseEntity<PatientDTO> createPatient(@RequestBody PatientDTO dto) {
         PatientDTO saved = service.createPatient(dto);
-        PatientCreatedEvent event = new PatientCreatedEvent(new PatientEventDTO(saved.getId(), saved.getFirstName(), saved.getLastName()));
-        kafka.send(event);
         return ResponseEntity.ok(saved);
     }
 

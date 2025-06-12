@@ -6,9 +6,11 @@
     <parent>
         <groupId>com.clinic</groupId>
         <artifactId>clinic-management-system</artifactId>
-        <version>1.0.0</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>api-gateway</artifactId>
+    <name>API Gateway</name>
+    <description>Central entry point for routing and securing all clinic services</description>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -23,7 +25,6 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -40,5 +41,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

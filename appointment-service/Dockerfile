@@ -1,5 +1,14 @@
-FROM openjdk:17-jdk-slim
-VOLUME /tmp
-ARG JAR_FILE=target/appointment-service-1.0.0.jar
+FROM eclipse-temurin:17-jdk-alpine
+
+RUN apk add --no-cache curl bash netcat-openbsd
+
+WORKDIR /app
+
+ARG JAR_FILE=appointment-service/target/appointment-service-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+
+# Reuse shared script from docker-utils
+COPY docker-utils/wait-for-it.sh wait-for-it.sh
+RUN chmod +x wait-for-it.sh
+
+ENTRYPOINT ["./wait-for-it.sh", "discovery-server:8761", "--timeout=60", "--", "java", "-jar", "app.jar"]

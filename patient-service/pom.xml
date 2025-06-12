@@ -6,9 +6,11 @@
     <parent>
         <groupId>com.clinic</groupId>
         <artifactId>clinic-management-system</artifactId>
-        <version>1.0.0</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>patient-service</artifactId>
+    <name>Patient Service</name>
+    <description>Handles patient registration, information, and record management</description>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -56,8 +58,6 @@
         <dependency>
             <groupId>com.clinic</groupId>
             <artifactId>common-core</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
@@ -66,11 +66,8 @@
         <dependency>
             <groupId>com.clinic</groupId>
             <artifactId>common-kafka</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -95,5 +92,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

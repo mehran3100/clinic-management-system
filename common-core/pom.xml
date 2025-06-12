@@ -6,9 +6,9 @@
     <parent>
         <groupId>com.clinic</groupId>
         <artifactId>clinic-management-system</artifactId>
-        <version>1.0.0</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>common-core</artifactId>
-    <description>Module for common project codes</description>
-
+    <name>Common Core</name>
+    <description>Shared core models, exceptions, and utility classes across all services</description>
 </project>

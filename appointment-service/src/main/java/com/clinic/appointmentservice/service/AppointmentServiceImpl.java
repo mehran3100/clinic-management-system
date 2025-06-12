@@ -1,6 +1,7 @@
 package com.clinic.appointmentservice.service;
 
 import com.clinic.appointmentservice.dto.AppointmentDTO;
+import com.clinic.appointmentservice.kafka.producer.AppointmentKafkaProducer;
 import com.clinic.commoncore.exception.ResourceNotFoundException;
 import com.clinic.appointmentservice.feignclient.PatientClient;
 import com.clinic.appointmentservice.mapper.AppointmentMapper;
@@ -9,9 +10,11 @@ import com.clinic.appointmentservice.repository.AppointmentRepository;
 import com.clinic.appointmentservice.utility.DateUtil;
 import com.clinic.commoncore.dto.AppointmentResponse;
 import com.clinic.commoncore.dto.PatientDTO;
+import com.clinic.commonkafka.event.AppointmentCreatedEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.clinic.commonkafka.dto.AppointmentEventDTO;
 
 import java.util.List;
 
@@ -21,11 +24,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository repository;
     private final AppointmentMapper mapper;
     private final PatientClient client;
+    private final AppointmentKafkaProducer kafka;
 
-    public AppointmentServiceImpl(AppointmentRepository repository, AppointmentMapper mapper, PatientClient client) {
+    public AppointmentServiceImpl(AppointmentRepository repository, AppointmentMapper mapper, PatientClient client, AppointmentKafkaProducer kafka) {
         this.repository = repository;
         this.mapper = mapper;
         this.client = client;
+        this.kafka = kafka;
     }
 
     @Override
@@ -41,7 +46,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentDTO create(AppointmentDTO dto) {
-        Appointment saved = repository.save(mapper.toEntity(dto));
+        var entity = mapper.toEntity(dto);
+        var saved = repository.save(entity);
+
+        var eventDTO = new AppointmentEventDTO(
+                saved.getId(),
+                saved.getPatientId(),
+                999L,
+                DateUtil.format(saved.getAppointmentDate()),
+                saved.getTimeSlot()
+        );
+
+        var event = new AppointmentCreatedEvent(eventDTO);
+        kafka.send(event);
+
         return mapper.toDTO(saved);
     }
 

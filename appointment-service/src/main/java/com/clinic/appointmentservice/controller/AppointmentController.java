@@ -1,11 +1,8 @@
 package com.clinic.appointmentservice.controller;
 
 import com.clinic.appointmentservice.dto.AppointmentDTO;
-import com.clinic.appointmentservice.kafka.producer.AppointmentKafkaProducer;
 import com.clinic.appointmentservice.service.AppointmentService;
 import com.clinic.commoncore.dto.AppointmentResponse;
-import com.clinic.commonkafka.dto.AppointmentEventDTO;
-import com.clinic.commonkafka.event.AppointmentCreatedEvent;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,11 +22,9 @@ import java.util.List;
 public class AppointmentController {
 
     private final AppointmentService service;
-    private final AppointmentKafkaProducer kafka;
 
-    public AppointmentController(AppointmentService service, AppointmentKafkaProducer kafka) {
+    public AppointmentController(AppointmentService service) {
         this.service = service;
-        this.kafka = kafka;
     }
 
     @PostMapping("/batch")
@@ -40,19 +35,7 @@ public class AppointmentController {
     @PostMapping
     public ResponseEntity<AppointmentDTO> create(@Valid @RequestBody AppointmentDTO dto) {
         AppointmentDTO saved = service.create(dto);
-        AppointmentEventDTO eventDTO = new AppointmentEventDTO(
-                saved.getId(),
-                saved.getPatientId(),
-                999L,
-                saved.getAppointmentDate(),
-                saved.getTimeSlot()
-        );
-
-        AppointmentCreatedEvent event = new AppointmentCreatedEvent(eventDTO);
-        kafka.send(event);
-
-
-        return ResponseEntity.ok(service.create(dto));
+        return ResponseEntity.ok(saved);
     }
 
     @Operation(

@@ -1,23 +1,8 @@
-version: '3.8'
+version: '3.9'
 
 services:
 
-  # Kafka and Zookeeper services
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    ports:
-      - "9092:9092"
-    networks:
-      - clinic-network
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    depends_on:
-      - zookeeper
-
+  # Zookeeper for Kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -29,94 +14,143 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
+  # Kafka Broker
+  kafka:
+    healthcheck:
+      test: [ "CMD-SHELL", "kafka-topics --bootstrap-server kafka:29092 --list || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"  # Exposed for host tools like Postman, CLI, etc.
+    networks:
+      - clinic-network
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,DOCKER://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,DOCKER://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  # PostgreSQL for all services
   postgres:
     image: postgres:14
     container_name: postgres
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
-    ports:
-      - "5432:5432"
-    networks:
-      - clinic-network
     volumes:
       - ./init-multiple-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - clinic-network
 
+  # Keycloak for authentication
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.3
     container_name: keycloak
+    command: start-dev
     ports:
-      - "8080:8080"
-    networks:
-      - clinic-network
+      - "8093:8080"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    command:
-      - start-dev
     volumes:
       - keycloak-data:/opt/keycloak/data
+    networks:
+      - clinic-network
 
+  # Eureka Discovery Server
   discovery-server:
     image: eurekaserver-image
     build:
-      context: ./discovery-server
+      context: .
+      dockerfile: discovery-server/Dockerfile
     container_name: discovery-server
     ports:
       - "8761:8761"
-    networks:
-      - clinic-network
-    depends_on:
-      - keycloak
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - keycloak
+    networks:
+      - clinic-network
 
+  # API Gateway
   api-gateway:
     build:
-      context: ./api-gateway
+      context: .
+      dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
     ports:
       - "8083:8080"
-    networks:
-      - clinic-network
-    depends_on:
-      - discovery-server
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+    networks:
+      - clinic-network
 
+  # Patient Service
   patient-service:
     build:
-      context: ./patient-service
+      context: .
+      dockerfile: patient-service/Dockerfile
     container_name: patient-service
     ports:
       - "8081:8080"
-    networks:
-      - clinic-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/patient_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=123456
     depends_on:
       - postgres
       - discovery-server
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/patient_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 123456
-      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - clinic-network
 
+  # Appointment Service
   appointment-service:
     build:
-      context: ./appointment-service
+      context: .
+      dockerfile: appointment-service/Dockerfile
     container_name: appointment-service
     ports:
       - "8084:8080"
-    networks:
-      - clinic-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/appointment_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=123456
     depends_on:
       - postgres
       - discovery-server
+    networks:
+      - clinic-network
+
+  # Recommendation Service
+  recommendation-service:
+    build:
+      context: .
+      dockerfile: recommendation-service/Dockerfile
+    container_name: recommendation-service
+    ports:
+      - "8085:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/appointment_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 123456
-      SPRING_PROFILES_ACTIVE: docker
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - kafka
+      - discovery-server
+    networks:
+      - clinic-network
 
 volumes:
   keycloak-data:
