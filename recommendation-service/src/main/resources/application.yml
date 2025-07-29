@@ -1,3 +1,15 @@
 spring:
   profiles:
     active: dev
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8093/realms/clinic-realm  # Default for local dev
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    com.clinic.core.security: TRACE
+    org.springframework.web: DEBUG
+    com.clinic.common-core.security: DEBUG  # Resolver logs

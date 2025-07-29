@@ -3,3 +3,10 @@ spring:
     active: dev
   main:
     web-application-type: reactive
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    com.clinic.core.security: TRACE
+    org.springframework.web: DEBUG
+    com.clinic.common-core.security: DEBUG  # Resolver logs
