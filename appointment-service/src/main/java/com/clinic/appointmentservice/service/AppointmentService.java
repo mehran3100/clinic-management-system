@@ -9,13 +9,21 @@ import java.util.List;
 
 public interface AppointmentService {
     AppointmentDTO create(AppointmentDTO dto);
+
     List<AppointmentDTO> createBatch(List<AppointmentDTO> dtos);
+
     Page<AppointmentDTO> getAllAppointments(Pageable pageable);
+
     AppointmentDTO getById(Long id);
+
     void delete(Long id);
+
     void deleteBatch(List<Long> ids);
+
     AppointmentDTO update(Long id, AppointmentDTO dto);
+
     List<AppointmentDTO> updateBatch(List<AppointmentDTO> dtos);
+
     AppointmentResponse getAppointmentWithPatient(Long appointmentId);
 
 }

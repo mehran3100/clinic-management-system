@@ -13,13 +13,13 @@ import org.springframework.kafka.annotation.EnableKafka;
 @EnableKafka
 public class AppointmentServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AppointmentServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AppointmentServiceApplication.class, args);
+    }
 
-	@PostConstruct
-	public void logActiveProfile() {
-		System.out.println("🔁 ACTIVE PROFILE = " + System.getProperty("spring.profiles.active"));
-	}
+    @PostConstruct
+    public void logActiveProfile() {
+        System.out.println("🔁 ACTIVE PROFILE = " + System.getProperty("spring.profiles.active"));
+    }
 
 }

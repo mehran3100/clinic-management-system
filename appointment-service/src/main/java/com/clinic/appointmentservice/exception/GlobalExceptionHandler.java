@@ -1,5 +1,7 @@
 package com.clinic.appointmentservice.exception;
 
+import com.clinic.commoncore.exception.ErrorResponse;
+import com.clinic.commoncore.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mapping.PropertyReferenceException;
@@ -10,8 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
-import com.clinic.commoncore.exception.ResourceNotFoundException;
-import com.clinic.commoncore.exception.ErrorResponse;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

@@ -1,7 +1,6 @@
 package com.clinic.appointmentservice.kafka.producer;
 
 import com.clinic.commonkafka.event.AppointmentCreatedEvent;
-import com.clinic.commonkafka.event.PatientCreatedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

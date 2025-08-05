@@ -1,20 +1,20 @@
 package com.clinic.appointmentservice.service;
 
 import com.clinic.appointmentservice.dto.AppointmentDTO;
-import com.clinic.appointmentservice.kafka.producer.AppointmentKafkaProducer;
-import com.clinic.commoncore.exception.ResourceNotFoundException;
 import com.clinic.appointmentservice.feignclient.PatientClient;
+import com.clinic.appointmentservice.kafka.producer.AppointmentKafkaProducer;
 import com.clinic.appointmentservice.mapper.AppointmentMapper;
 import com.clinic.appointmentservice.model.Appointment;
 import com.clinic.appointmentservice.repository.AppointmentRepository;
 import com.clinic.appointmentservice.utility.DateUtil;
 import com.clinic.commoncore.dto.AppointmentResponse;
 import com.clinic.commoncore.dto.PatientDTO;
+import com.clinic.commoncore.exception.ResourceNotFoundException;
+import com.clinic.commonkafka.dto.AppointmentEventDTO;
 import com.clinic.commonkafka.event.AppointmentCreatedEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.clinic.commonkafka.dto.AppointmentEventDTO;
 
 import java.util.List;
 
