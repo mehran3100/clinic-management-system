@@ -1,10 +1,12 @@
-package com.clinic.discovery_server;
+package com.clinic.apigateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class DiscoveryServerApplicationTests {
+@ActiveProfiles("test")
+class ApiGatewayApplicationTests {
 
 	@Test
 	void contextLoads() {
