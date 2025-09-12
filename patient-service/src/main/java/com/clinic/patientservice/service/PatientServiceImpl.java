@@ -20,9 +20,9 @@ public class PatientServiceImpl implements PatientService {
     private final PatientMapper mapper;
     private final PatientKafkaProducer kafka;
 
-    public PatientServiceImpl(PatientRepository patientRepository, PatientMapper patientMapper, PatientKafkaProducer kafka) {
-        this.repository = patientRepository;
-        this.mapper = patientMapper;
+    public PatientServiceImpl(PatientRepository repository, PatientMapper mapper, PatientKafkaProducer kafka) {
+        this.repository = repository;
+        this.mapper = mapper;
         this.kafka = kafka;
     }
 
