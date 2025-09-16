@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
 
   # Zookeeper for Kafka
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.6.1
     container_name: zookeeper
     ports:
       - "2181:2181"
@@ -21,7 +19,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.6.1
     container_name: kafka
     ports:
       - "9092:9092"  # Exposed for host tools like Postman, CLI, etc.

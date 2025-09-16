@@ -16,6 +16,11 @@ public class DockerSecurityConfig extends BaseSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/actuator/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html").denyAll()
                         .requestMatchers("/appointments/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )

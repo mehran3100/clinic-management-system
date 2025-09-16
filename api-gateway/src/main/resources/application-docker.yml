@@ -2,6 +2,11 @@ server:
   port: 8080
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8093/realms/clinic-realm
   application:
     name: api-gateway
   cloud:
@@ -16,13 +21,13 @@ spring:
           predicates:
             - Path=/patients/**
           filters:
-            - StripPrefix=0
+            - StripPrefix=1
         - id: appointment-service
           uri: lb://appointment-service
           predicates:
             - Path=/appointments/**
           filters:
-            - StripPrefix=0
+            - StripPrefix=1
 
 eureka:
   instance:
@@ -35,3 +40,19 @@ eureka:
       defaultZone: http://discovery-server:8761/eureka
       webclient:
         enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    # Aggregate downstream OpenAPI specs via Gateway paths
+    urls:
+      - name: patient-service
+        url: /patient-service/v3/api-docs
+      - name: appointment-service
+        url: /appointment-service/v3/api-docs
+
+    # Enable OAuth button in the UI (Keycloak/Authorization Code + PKCE)
+    oauth:
+      client-id: cms-swagger-ui
+      use-pkce-with-authorization-code-grant: true
+# If you customize api-docs paths in services, update the URLs above accordingly.

@@ -41,5 +41,19 @@ info:
     description: Service for managing patient records
 
 management:
-  info.env.enabled: true
-  endpoints.web.exposure.include: health,info
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    enabled: false      # No per-service UI in prod
+  api-docs:
+    enabled: true       # But DO produce /v3/api-docs for the Gateway to read
+    path: /v3/api-docs
